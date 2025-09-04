@@ -1,9 +1,32 @@
 package me.kasif.journalApp.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+// for treating the journal entry as a collection of MongoDB
+@Document(collection = "journal_entry")
 public class JournalEntry {
-private long id;
-private String title;
-private String content;
+    @Id
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId id;
+    private String title;
+    private String content;
+    private LocalDateTime date;
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
 
     public String getTitle() {
         return title;
@@ -21,11 +44,11 @@ private String content;
         this.content = content;
     }
 
-    public long getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 }

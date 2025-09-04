@@ -1,40 +1,56 @@
 package me.kasif.journalApp.controller;
 
 import me.kasif.journalApp.entity.JournalEntry;
+import me.kasif.journalApp.repository.JournalEntryRepository;
+import me.kasif.journalApp.service.JournalEntryService;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryController {
 
-    private Map<Long, JournalEntry> journalEntries = new HashMap<>();
+    @Autowired
+    private JournalEntryService journalEntryService;
 
     @GetMapping // "/journal" -> GET
-    public List<JournalEntry> getAll(){
-        return new ArrayList<>(journalEntries.values());
-    }
+    public List<JournalEntry> getAll() {
+        return journalEntryService.getAll();
 
-    @GetMapping("/{myId}")
-    public JournalEntry getJournalEntryById(@PathVariable Long myId){
-        return journalEntries.get(myId);
     }
 
     @PostMapping // "/journal" -> POST
-    public boolean createJournalEntry(@RequestBody JournalEntry journalEntry){
-        journalEntries.put(journalEntry.getId(), journalEntry);
-        return true;
+    public JournalEntry createJournalEntry(@RequestBody JournalEntry journalEntry) {
+        return journalEntryService.saveEntry((JournalEntry) journalEntry);
+    }
+
+    @GetMapping("/{myId}")
+    public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable String myId) {
+        JournalEntry entry = null;
+        try {
+            ObjectId objectId = new ObjectId(myId); // convert string to ObjectId
+            entry = journalEntryService.getEntry(objectId);
+        } catch (IllegalArgumentException e) {
+            // invalid ObjectId format
+            return ResponseEntity.notFound().build(); // or 404 if you prefer
+        }
+
+        return entry != null ? ResponseEntity.ok(entry) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{myId}")
+    public JournalEntry updateJournalEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry journalEntry) {
+        return journalEntryService.updateEntry(myId,(JournalEntry) journalEntry);
     }
 
     @DeleteMapping("/{myId}")
-    public boolean deleteJournalEntryById(@PathVariable Long myId){
-        journalEntries.remove(myId);
-        return true;
+    public JournalEntry deleteJournalEntryById(@PathVariable ObjectId myId) {
+        return journalEntryService.deleteEntry(myId);
     }
-
-
 }
