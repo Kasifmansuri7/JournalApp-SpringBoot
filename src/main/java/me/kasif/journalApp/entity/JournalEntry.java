@@ -6,11 +6,12 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Data;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 // for treating the journal entry as a collection of MongoDB
 @Document(collection = "journal_entry")
+@Data
 public class JournalEntry {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
@@ -18,37 +19,4 @@ public class JournalEntry {
     private String title;
     private String content;
     private LocalDateTime date;
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
 }
