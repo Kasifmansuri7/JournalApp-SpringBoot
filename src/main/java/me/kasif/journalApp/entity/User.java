@@ -33,4 +33,5 @@ public class User {
     private List<JournalEntry> journalEntries = new ArrayList<>();
 
     private LocalDateTime date;
+    private List<String> roles;
 }
