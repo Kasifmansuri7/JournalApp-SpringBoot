@@ -5,6 +5,7 @@ import me.kasif.journalApp.repository.JournalEntryRepository;
 import me.kasif.journalApp.service.JournalEntryService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +21,18 @@ public class JournalEntryController {
     private JournalEntryService journalEntryService;
 
     @GetMapping // "/journal" -> GET
-    public List<JournalEntry> getAll() {
-        return journalEntryService.getAll();
-
+    public ResponseEntity<List<JournalEntry>> getAll() {
+        return new ResponseEntity<>(journalEntryService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping // "/journal" -> POST
-    public JournalEntry createJournalEntry(@RequestBody JournalEntry journalEntry) {
-        return journalEntryService.saveEntry((JournalEntry) journalEntry);
+    public ResponseEntity<JournalEntry> createJournalEntry(@RequestBody JournalEntry journalEntry) {
+        try {
+            journalEntryService.saveEntry((JournalEntry) journalEntry);
+            return new ResponseEntity<>(journalEntry, HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{myId}")
@@ -45,12 +50,22 @@ public class JournalEntryController {
     }
 
     @PutMapping("/{myId}")
-    public JournalEntry updateJournalEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry journalEntry) {
-        return journalEntryService.updateEntry(myId,(JournalEntry) journalEntry);
+    public ResponseEntity<JournalEntry> updateJournalEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry journalEntry) {
+        try {
+            journalEntryService.updateEntry(myId, (JournalEntry) journalEntry);
+            return new ResponseEntity<JournalEntry>(journalEntry, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<JournalEntry>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{myId}")
-    public JournalEntry deleteJournalEntryById(@PathVariable ObjectId myId) {
-        return journalEntryService.deleteEntry(myId);
+    public ResponseEntity<JournalEntry> deleteJournalEntryById(@PathVariable ObjectId myId) {
+        try {
+            JournalEntry deletedJournal = journalEntryService.deleteEntry(myId);
+            return new ResponseEntity<JournalEntry>(deletedJournal, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<JournalEntry>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
