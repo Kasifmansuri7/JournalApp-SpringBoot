@@ -30,7 +30,7 @@ public class UserController {
             if (usernameExists != null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
-            userService.saveEntry(user);
+            userService.saveNewUser(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -46,7 +46,7 @@ public class UserController {
         try {
             // Update password
             userExists.setPassword(user.getPassword());
-            userService.saveEntry(user);
+            userService.saveUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());

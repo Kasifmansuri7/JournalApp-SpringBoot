@@ -36,7 +36,7 @@ public class JournalEntryService {
 
             // Add the journal in the user db for ref
             user.getJournalEntries().add(savedJournal);
-            userService.saveEntry(user);
+            userService.saveUser(user);
 
             return savedJournal;
         } catch (Exception e) {
@@ -76,13 +76,25 @@ public class JournalEntryService {
         }
 
         user.getJournalEntries().remove(getEntry(id));
-        userService.saveEntry(user);
+        userService.saveUser(user);
 
         Optional<JournalEntry> entry = journalEntryRepository.findById(id);
         entry.ifPresent(e -> journalEntryRepository.deleteById(id));
         return entry.orElse(null);
     }
+
+    // Function for returning journal entry of owner user
+    public JournalEntry getEntryByIdUser(ObjectId id, String username) throws Exception {
+        User user = userService.findByUserName(username);
+        if (user == null) {
+            throw new Exception("User not found!");
+        }
+        List<JournalEntry> journalEntries = user.getJournalEntries();
+        return journalEntries.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
+    }
 }
+
+
 
 
 //  controller --> Service --> Repository

@@ -28,11 +28,16 @@ public class UserService {
         return new ArrayList<>(userRepository.findAll());
     }
 
-    public User saveEntry(User user) {
+    public User saveNewUser(User user) {
         user.setDate(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(List.of("USER"));
         return userRepository.save(user);
+    }
+
+    public void saveUser(User user){
+        userRepository.save(user);
+        return;
     }
 
     public User getEntry(ObjectId id) {
@@ -49,6 +54,14 @@ public class UserService {
 
     public User findByUserName(String username) {
        return userRepository.findByUsername(username);
+    }
+
+    // Method for creating admin user
+    public User saveNewAdminUser(User user) {
+        user.setDate(LocalDateTime.now());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(List.of("USER", "ADMIN"));
+        return userRepository.save(user);
     }
 }
 
