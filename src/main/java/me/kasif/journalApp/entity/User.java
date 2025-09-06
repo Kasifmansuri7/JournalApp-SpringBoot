@@ -3,7 +3,9 @@ package me.kasif.journalApp.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mongodb.lang.NonNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,6 +19,8 @@ import java.util.List;
 // for treating the journal entry as a collection of MongoDB
 @Document(collection = "users")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
@@ -28,6 +32,9 @@ public class User {
 
     @NonNull
     private String password;
+
+    private String email;
+    private boolean sentimentAnalysis;
 
     @DBRef
     private List<JournalEntry> journalEntries = new ArrayList<>();
