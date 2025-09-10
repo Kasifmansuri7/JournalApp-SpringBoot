@@ -25,16 +25,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        try {
-            User usernameExists = userService.findByUserName(user.getUsername());
-            if (usernameExists != null) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
-            }
-            userService.saveNewUser(user);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        User usernameExists = userService.findByUserName(user.getUsername());
+        if (usernameExists != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        userService.saveNewUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -43,14 +39,9 @@ public class UserController {
         String username = authentication.getName();
 
         User userExists = userService.findByUserName(username);
-        try {
-            // Update password
-            userExists.setPassword(user.getPassword());
-            userService.saveUser(user);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        // Update password
+        userExists.setPassword(user.getPassword());
+        userService.saveUser(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
